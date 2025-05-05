@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RGB Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            overflow: hidden;
+        }
+
+        .calculator {
+            width: 320px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .display {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: right;
+            font-size: 2.5rem;
+            height: 60px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        button {
+            border: none;
+            padding: 20px;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .operator {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .number {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .equals {
+            background: linear-gradient(45deg, #ff6b6b, #ffa3a3);
+            grid-column: span 2;
+        }
+
+        .clear {
+            background: rgba(255, 99, 71, 0.7);
+        }
+
+        .rgb-btn {
+            animation: rainbow 5s linear infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes rainbow {
+            0% { background-color: #ff0000; }
+            16% { background-color: #ff8000; }
+            33% { background-color: #ffff00; }
+            50% { background-color: #00ff00; }
+            66% { background-color: #0000ff; }
+            83% { background-color: #8000ff; }
+            100% { background-color: #ff0000; }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">AC</button>
+            <button class="operator" onclick="appendToDisplay('/')">/</button>
+            <button class="operator" onclick="appendToDisplay('*')">×</button>
+            <button class="operator" onclick="appendToDisplay('-')">-</button>
+            
+            <button class="number" onclick="appendToDisplay('7')">7</button>
+            <button class="number" onclick="appendToDisplay('8')">8</button>
+            <button class="number" onclick="appendToDisplay('9')">9</button>
+            <button class="operator" onclick="appendToDisplay('+')">+</button>
+            
+            <button class="number" onclick="appendToDisplay('4')">4</button>
+            <button class="number" onclick="appendToDisplay('5')">5</button>
+            <button class="number" onclick="appendToDisplay('6')">6</button>
+            <button class="rgb-btn" onclick="calculate()">=</button>
+            
+            <button class="number" onclick="appendToDisplay('1')">1</button>
+            <button class="number" onclick="appendToDisplay('2')">2</button>
+            <button class="number" onclick="appendToDisplay('3')">3</button>
+            
+            <button class="number" onclick="appendToDisplay('0')">0</button>
+            <button class="number" onclick="appendToDisplay('.')">.</button>
+        </div>
+    </div>
+
+    <script>
+        let currentDisplay = '0';
+        const display = document.getElementById('display');
+        
+        function updateDisplay() {
+            display.textContent = currentDisplay;
+        }
+        
+        function appendToDisplay(value) {
+            if (currentDisplay === '0' && value !== '.') {
+                currentDisplay = value;
+            } else {
+                currentDisplay += value;
+            }
+            updateDisplay();
+        }
+        
+        function clearDisplay() {
+            currentDisplay = '0';
+            updateDisplay();
+        }
+        
+        function calculate() {
+            try {
+                currentDisplay = eval(currentDisplay).toString();
+            } catch (error) {
+                currentDisplay = 'Error';
+            }
+            updateDisplay();
+            
+            // Add RGB effect to all buttons temporarily
+            const buttons = document.querySelectorAll('.calculator button');
+            buttons.forEach(btn => {
+                btn.classList.add('rgb-btn');
+                setTimeout(() => {
+                    btn.classList.remove('rgb-btn');
+                }, 1000);
+            });
+        }
+        
+        // Make number buttons cycle through colors
+        const numberButtons = document.querySelectorAll('.number');
+        let hue = 0;
+        
+        setInterval(() => {
+            hue = (hue + 1) % 360;
+            numberButtons.forEach(button => {
+                button.style.backgroundColor = `hsla(${hue}, 80%, 60%, 0.3)`;
+                button.style.border = `1px solid hsla(${hue}, 80%, 70%, 0.5)`;
+            });
+        }, 50);
+    </script>
+</body>
+</html>
